@@ -75,7 +75,7 @@ void Model::InferBatch(const google::protobuf::RepeatedPtrField<inference::Infer
   for (int i = 0; i < N; ++i) {
     inference::Feature pred;
     pred.set_f32_value(pred_vector[i]);
-    (*(response->mutable_results()))[ids[i]] = std::move(pred);
+    (*response->mutable_results())[ids.at(i)] = std::move(pred);
   }
 }
 }  // namespace models

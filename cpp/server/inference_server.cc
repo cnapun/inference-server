@@ -22,6 +22,7 @@ using inference::ModelInference;
 
 DEFINE_int32(port, 50051, "Port to run server at");
 DEFINE_string(config_file, "data/config.json", "File containing model definitions");
+DEFINE_int32(max_threads, 2, "Number of threads for server. Must be >= 2");
 
 class InferenceServiceImpl final : public ModelInference::Service {
  public:
@@ -48,6 +49,10 @@ void RunServer() {
 
   grpc::EnableDefaultHealthCheckService(true);
   ServerBuilder builder;
+  grpc::ResourceQuota resource_quota;
+  resource_quota.SetMaxThreads(FLAGS_max_threads);
+  builder.SetResourceQuota(resource_quota);
+  builder.SetSyncServerOption(ServerBuilder::SyncServerOption::MAX_POLLERS, FLAGS_max_threads);
   // Listen on the given address without any authentication mechanism.
   builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
   // Register "service" as the instance through which we'll communicate with
