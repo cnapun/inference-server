@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package configs;
+
+message GlobalModelConfig {
+  repeated ModelSpec models = 1;
+}
+
+message ModelSpec {
+  string name = 1;
+  ModelType model_type = 2;
+  string model_path = 3;
+  repeated FeatureSpec transforms = 4;
+  repeated string feature_order = 5;
+}
+
+enum ModelType {
+  XGBOOST = 0;
+}
+
+message StringCategoricalSpec {
+  map<string, uint32> encoding = 1;
+  uint32 default_value = 2;
+}
+
+message I32CategoricalSpec {
+  map<int32, uint32> encoding = 1;
+  uint32 default_value = 2;
+}
+
+message ContinuousFloatSpec {
+  float default_value = 1;
+}
+
+message FeatureSpec {
+  string name = 1;
+  oneof transform_spec {
+    StringCategoricalSpec str_cat = 3;
+    I32CategoricalSpec i32_cat = 4;
+    ContinuousFloatSpec f32_cont = 5;
+  }
+
+  uint32 dimensions = 6;
+}

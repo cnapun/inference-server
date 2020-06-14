@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package inference;
+
+service ModelInference {
+  rpc InferBatch(InferRequest) returns (InferResponse);
+}
+
+message InferRequest {
+  string model = 1;
+  repeated InferRequestItem requests = 2;
+}
+
+message InferRequestItem {
+  string id = 1;
+  map<string, Feature> features = 2;
+}
+
+message Feature {
+  string name = 1;
+  oneof value {
+    string str_value = 2;
+    float f32_value = 4;
+    int32 i32_value = 3;
+  }
+}
+
+
+message InferResponse {
+  map<string, Feature> results = 1;
+}
