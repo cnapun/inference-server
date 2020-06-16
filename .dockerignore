@@ -1,0 +1,9 @@
+bazel-*
+docker*
+.dockerignore
+**/.git
+.clwb
+*.md
+.clang-format
+.gitignore
+.travis.yml

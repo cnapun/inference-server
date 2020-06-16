@@ -6,6 +6,7 @@ cc_library(
     name = "model_pool",
     srcs = ["model_pool.cc"],
     hdrs = ["model_pool.h"],
+    copts = ["-Wall"],
     deps = [
         "//cpp/server/models:model",
         "//cpp/server/models:model_registry",
@@ -15,13 +16,18 @@ cc_library(
 )
 
 cc_binary(
-    name = "inference_server",
+    name = "server",
     srcs = ["inference_server.cc"],
+    copts = ["-Wall"],
     data = [
         "//data:sample_config",
         "//data:sample_model",
     ],
     defines = ["BAZEL_BUILD"],
+    visibility = [
+        "//cpp/server:__subpackages__",
+        "//docker:__subpackages__",
+    ],
     deps = [
         ":model_pool",
         "//proto:inference_cc_grpc",

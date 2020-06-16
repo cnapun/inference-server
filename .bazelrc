@@ -1,1 +1,1 @@
-common --cxxopt='-std=c++17' --cxxopt='-Werror
+build --cxxopt='-std=c++17'
