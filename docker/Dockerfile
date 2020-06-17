@@ -44,22 +44,23 @@ COPY . .
 
 RUN bazel build -c opt --jobs=${bazel_jobs} //cpp/...
 
-RUN mkdir /inference_server/ \
-    && ldd bazel-bin/cpp/server/server | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' /inference_server/ \
-    && cp bazel-bin/cpp/server/server /inference_server/server \
+
+RUN mkdir /built_binaries/inference_server/ \
+    && ldd bazel-bin/cpp/server/server | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' /built_binaries/inference_server/ \
+    && cp bazel-bin/cpp/server/server /built_binaries/inference_server/server \
     && cp -r /src/data /data
-RUN mkdir /inference_client/ \
-    && ldd bazel-bin/cpp/client/client | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' /inference_client/ \
-    && cp bazel-bin/cpp/client/client /inference_client/client \
+RUN mkdir /built_binaries/inference_client/ \
+    && ldd bazel-bin/cpp/client/client | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' /built_binaries/inference_client/ \
+    && cp bazel-bin/cpp/client/client /built_binaries/inference_client/client \
     && cp -r /src/data /data
 
 FROM ubuntu:18.04 as client
-COPY --from=build-env /inference_client/ /inference_client/
+COPY --from=build-env /built_binaries/inference_client/ /inference_client/
 ENV LD_LIBRARY_PATH=/inference_client
 ENTRYPOINT ["/inference_client/client" ]
 
 FROM ubuntu:18.04 as server
-COPY --from=build-env /inference_server/ /inference_server/
+COPY --from=build-env /built_binaries/inference_server/ /inference_server/
 COPY --from=build-env /data /data
 ENV LD_LIBRARY_PATH=/inference_server
 ENTRYPOINT ["/inference_server/server" ]
