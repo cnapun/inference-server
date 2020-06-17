@@ -1,3 +1,4 @@
+![](https://travis-ci.com/cnapun/inference-server.svg?branch=master)
 # Inference Server
 This is mildly hacky, not practical yet. Basic C++ model inference server using GRPC. Currently only xgboost is supported; Pytorch might come in the future.
 
