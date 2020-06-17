@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package models;
+
+message LinearModelDefinition {
+  repeated float weights = 1;
+}

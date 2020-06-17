@@ -30,12 +30,26 @@ cc_library(
 )
 
 cc_library(
+    name = "linear_model",
+    srcs = ["linear_model.cc"],
+    hdrs = ["linear_model.h"],
+    copts = ["-Wall"],
+    deps = [
+        ":model",
+        "//proto:inference_cc_proto",
+        "//proto:linear_model_cc_proto",
+        "//proto:model_spec_cc_proto",
+    ],
+)
+
+cc_library(
     name = "model_registry",
     srcs = ["model_registry.cc"],
     hdrs = ["model_registry.h"],
     copts = ["-Wall"],
     visibility = ["//cpp/server:__subpackages__"],
     deps = [
+        ":linear_model",
         ":model",
         ":xgb_model",
         "//proto:model_spec_cc_proto",

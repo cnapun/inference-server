@@ -16,6 +16,7 @@ message ModelSpec {
 
 enum ModelType {
   XGBOOST = 0;
+  LINEAR = 1;
 }
 
 message StringCategoricalSpec {

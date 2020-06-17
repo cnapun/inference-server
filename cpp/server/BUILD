@@ -21,7 +21,7 @@ cc_binary(
     copts = ["-Wall"],
     data = [
         "//data:sample_config",
-        "//data:sample_model",
+        "//data:sample_models",
     ],
     defines = ["BAZEL_BUILD"],
     visibility = [

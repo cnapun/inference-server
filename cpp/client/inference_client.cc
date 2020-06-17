@@ -18,6 +18,7 @@ using inference::ModelInference;
 
 DEFINE_int32(port, 50051, "Port to connect to");
 DEFINE_string(host, "localhost", "Host to ping");
+DEFINE_string(model, "exp1_net", "Model name to query");
 
 int main(int argc, char **argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
@@ -25,7 +26,7 @@ int main(int argc, char **argv) {
       FLAGS_host + ":" + std::to_string(FLAGS_port), grpc::InsecureChannelCredentials()));
   const auto &stub = ModelInference::NewStub(channel);
   InferRequest request;
-  request.set_model("exp1_net");
+  request.set_model(FLAGS_model);
   InferRequestItem i1;
   i1.set_id("i1");
   Feature f;

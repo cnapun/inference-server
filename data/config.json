@@ -28,6 +28,35 @@
         "gender",
         "age"
       ]
+    },
+    {
+      "name": "exp2_net",
+      "modelPath": "data/sample_linear_model.json",
+      "modelType": "LINEAR",
+      "transforms": [
+        {
+          "name": "age",
+          "f32Cont": {
+            "defaultValue": 18
+          },
+          "dimensions": 1
+        },
+        {
+          "name": "gender",
+          "strCat": {
+            "encoding": {
+              "m": 1,
+              "f": 2
+            },
+            "defaultValue": 0
+          },
+          "dimensions": 3
+        }
+      ],
+      "featureOrder": [
+        "gender",
+        "age"
+      ]
     }
   ]
 }
