@@ -1,4 +1,5 @@
 FROM ubuntu:18.04 AS build-env
+ARG bazel_jobs=4
 RUN apt-get update && apt-get install -y \
    zip \
    unzip \
@@ -41,7 +42,7 @@ ENV PATH="/external/ninja/build-cmake:${PATH}"
 WORKDIR /src
 COPY . .
 
-RUN bazel build -c opt --jobs=4 //cpp/server
+RUN bazel build -c opt --jobs=${bazel_jobs} //cpp/server
 
 RUN mkdir /inference_server/ \
     && ldd bazel-bin/cpp/server/server | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' /inference_server/ \

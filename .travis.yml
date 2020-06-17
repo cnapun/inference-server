@@ -1,0 +1,29 @@
+language: minimal
+services:
+- docker
+dist: bionic
+env:
+  matrix:
+  - DOCKER_TAG=${TRAVIS_COMMIT::8}
+  global:
+    secure: hDxUg25thW1IEjjphh7upnpK1B2kkuwI2lgnEyKheSJzAgflL8chx8zD5MANkn8b0H3szS8ni4WDYGAoM5+NnEPzEQeC4zQ2IBwRd616/+gddD2OJCbO9rscsK5paJ5J/BdfJYx+6UYnSuMz66R9JiAZRYG6P7Z25yNwa08ReAIS606rk3ZH6eHmXCPIzXUVmk45hFO4B1uAm8nBJAEqDyRY3J9FqJD52brH/wO8mdTRiSLWrHpGy68IPqn2cs0Z0qLKV0l7AOABQQKdIWC0Y9YY/m6UQOvDgZJ/edBphUXDaN3Y4KhIVsS8WabKYfEfnZwfZjwmQPkPbt0eUzLpbTLLktKVtJOhrambVZiOjCQ28MMnXfWSo9d4RfhwPrcLAgjITvQP7ecxT+A76tBs6SrMZBIqQihQ2z0GniIqmx9JHEM14CR9NgEsY0dgZgCY2wvZA0j1TukSAfoKINtAURFZAe2ENkN5gFMlWXAsSfXAAFSXE7/TGM5y3XQ/hzcqndVRZ2GvpmlKdrDCaX6u7uRiZV5RiOk65vzQL06tm3qR6OMxkDYW7a+GDR+NS0CVXsg1ZGI1TTdU3unRC8OTnJcg2qHToA6fi2rjvcj5NIn5saSF2apj4ufDHfaXZYcHLq71ZuVFxcNA/vVwvVjOfboHtCpMRA7vRMLZ7Qjv4oU=
+
+stages:
+- docker build
+- test
+- name: deploy
+  if: branch = master
+jobs:
+  include:
+  - stage: docker build
+    script:
+    - docker build --build-arg bazel_jobs=1 -m 5g -t cnapun/inference-server:${DOCKER_TAG} -f docker/Dockerfile .
+    - docker images
+  - stage: test
+    script:
+    - echo "not running tests yet"
+  - stage: docker push
+    script:
+    - docker tag cnapun/inference-server:${DOCKER_TAG} cnapun/inference-server:latest
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    - docker push cnapun/inference-server

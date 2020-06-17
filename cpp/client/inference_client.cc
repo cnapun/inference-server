@@ -17,10 +17,11 @@ using inference::InferResponse;
 using inference::ModelInference;
 
 DEFINE_int32(port, 50051, "Port to connect to");
+DEFINE_string(host, "localhost", "Host to ping");
 
 int main(int argc, char **argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
-  std::shared_ptr<Channel> channel(grpc::CreateChannel("localhost:" + std::to_string(FLAGS_port),
+  std::shared_ptr<Channel> channel(grpc::CreateChannel(FLAGS_host + ":" + std::to_string(FLAGS_port),
                                                        grpc::InsecureChannelCredentials()));
   const auto &stub = ModelInference::NewStub(channel);
   InferRequest request;
