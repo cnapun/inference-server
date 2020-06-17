@@ -1,7 +1,6 @@
 language: minimal
 services:
 - docker
-dist: bionic
 env:
   matrix:
   - DOCKER_TAG=${TRAVIS_COMMIT::8}
@@ -12,40 +11,24 @@ addons:
     update: true
 os:
   linux
+dist: bionic
+
 stages:
 - docker build
-- test
-- name: deploy
+- name: docker push
   if: branch = master
+
 jobs:
   include:
   - stage: docker build
     script:
-    - docker build --build-arg bazel_jobs=2 -m 5g -t inference-client:current --target client -f docker/Dockerfile .
     - docker build --build-arg bazel_jobs=2 -m 5g -t cnapun/inference-server:${DOCKER_TAG} --target server -f docker/Dockerfile .
     - docker save -o server.tar cnapun/inference-server:${DOCKER_TAG}
-    - docker save -o client.tar inference-client:current
     workspaces:
       create:
       - name: server-tar
         paths:
         - server.tar
-      - name: client-tar
-        paths:
-        - client.tar
-  - stage: integration test
-    workspaces:
-      use:
-      - server-tar
-      - client-tar
-    install:
-    - sudo apt-get install -y jq
-    script:
-    - docker load -i server.tar
-    - docker load -i client.tar
-    - docker run -d -p 10101:10101 --name inference_server cnapun/inference-server:${DOCKER_TAG} --port 10101
-    - docker run inference-client:current --host $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' inference_server) | tail -n1 > inference_result.json
-    - diff <(jq -S . inference_result.json) <(jq -S . data/expected_preds.json)
   - stage: docker push
     workspaces:
       use: server-tar
