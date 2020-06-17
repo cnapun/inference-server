@@ -37,13 +37,6 @@ load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
 grpc_extra_deps()
 
 http_archive(
-    name = "com_google_gflags",
-    sha256 = "b20f58e7f210ceb0e768eb1476073d0748af9b19dfbbf53f4fd16e3fb49c5ac8",
-    strip_prefix = "gflags-e171aa2d15ed9eb17054558e0b3a6a413bb01067",
-    urls = ["https://github.com/gflags/gflags/archive/e171aa2d15ed9eb17054558e0b3a6a413bb01067.tar.gz"],
-)
-
-http_archive(
     name = "com_google_benchmark",
     sha256 = "8dcd0c9c17265584343e209dce938d8834cd8356ea5bda98045ee7ff35793d30",
     strip_prefix = "benchmark-8039b4030795b1c9b8cedb78e3a2a6fb89574b6e",
@@ -79,4 +72,10 @@ new_git_repository(
     init_submodules = 1,
     build_file_content = all_content,
     remote = "https://github.com/dmlc/xgboost.git",
+)
+
+http_archive(
+    name = "com_github_google_glog",
+    strip_prefix = "glog-0a2e5931bd5ff22fd3bf8999eb8ce776f159cda6",
+    url = "https://github.com/google/glog/archive/0a2e5931bd5ff22fd3bf8999eb8ce776f159cda6.zip"
 )

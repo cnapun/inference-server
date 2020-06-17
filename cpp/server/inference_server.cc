@@ -1,4 +1,5 @@
 #include <gflags/gflags.h>
+#include <glog/logging.h>
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
 
@@ -28,6 +29,7 @@ class InferenceServiceImpl final : public ModelInference::Service {
  public:
   InferenceServiceImpl() : model_pool_(std::make_unique<models::ModelPool>()) {
     model_pool_->LoadModels(FLAGS_config_file);
+    google::FlushLogFiles(google::INFO);
   }
 
   Status InferBatch(ServerContext *context, const InferRequest *request,
@@ -45,6 +47,7 @@ class InferenceServiceImpl final : public ModelInference::Service {
 
 void RunServer() {
   std::string server_address("0.0.0.0:" + std::to_string(FLAGS_port));
+
   InferenceServiceImpl service;
 
   grpc::EnableDefaultHealthCheckService(true);
@@ -60,14 +63,17 @@ void RunServer() {
   builder.RegisterService(&service);
   // Finally assemble the server.
   std::unique_ptr<Server> server(builder.BuildAndStart());
-  std::cout << "Server listening on " << server_address << std::endl;
+  LOG(INFO) << "Server listening on " << server_address << " with " << FLAGS_max_threads
+            << " threads";
   // Wait for the server to shutdown. Note that some other thread must be
   // responsible for shutting down the server for this call to ever return.
   server->Wait();
 }
 
 int main(int argc, char **argv) {
+  google::InitGoogleLogging(argv[0]);
   gflags::ParseCommandLineFlags(&argc, &argv, true);
+  FLAGS_logtostderr = 1;
   RunServer();
 
   return 0;

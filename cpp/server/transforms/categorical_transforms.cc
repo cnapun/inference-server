@@ -1,5 +1,7 @@
 #include "cpp/server/transforms/categorical_transforms.h"
 
+#include <glog/logging.h>
+
 namespace transforms {
 std::vector<float> CategoricalStringTransform::Apply(
     const std::optional<inference::Feature> &feature) const {
@@ -21,13 +23,9 @@ std::vector<float> CategoricalStringTransform::Apply(
 
 void CategoricalStringTransform::LoadTransform(const configs::FeatureSpec &spec) {
   Transform::LoadTransform(spec);
-  if (spec_->str_cat().default_value() >= spec_->dimensions()) {
-    throw std::runtime_error("default_value must be less than dimensions");
-  }
+  CHECK_LT(spec_->str_cat().default_value(), spec_->dimensions());
   for (const auto &pair : spec_->str_cat().encoding()) {
-    if (pair.second >= spec_->dimensions()) {
-      throw std::runtime_error("encoding index must be less than dimensions");
-    }
+    CHECK_LT(pair.second, spec_->dimensions()) << "encoding key=" << pair.first;
   }
 }
 

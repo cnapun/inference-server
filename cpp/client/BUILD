@@ -9,8 +9,8 @@ cc_binary(
     deps = [
         "//proto:inference_cc_grpc",
         "//proto:inference_cc_proto",
+        "@com_github_gflags_gflags//:gflags",
         "@com_github_grpc_grpc//:grpc++",
-        "@com_google_gflags//:gflags",
     ],
 )
 

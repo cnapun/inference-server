@@ -1,5 +1,7 @@
 #include "cpp/server/models/model.h"
 
+#include <glog/logging.h>
+
 #include <optional>
 
 #include "cpp/server/transforms/transform.h"
@@ -10,8 +12,8 @@ using transforms::Transform;
 
 namespace {
 void ValidateModelSpec(const configs::ModelSpec &spec) {
-  GOOGLE_CHECK(spec.feature_order_size() == spec.transforms_size());
-  GOOGLE_CHECK(spec.feature_order_size() != 0);
+  CHECK_EQ(spec.feature_order_size(), spec.transforms_size());
+  CHECK_NE(spec.feature_order_size(), 0);
 }
 }  // namespace
 
@@ -21,6 +23,7 @@ void Model::LoadSpec(const configs::ModelSpec &spec) {
   transforms_ = std::make_unique<std::vector<std::unique_ptr<transforms::Transform>>>();
   feature_order_ = std::make_unique<std::vector<std::string>>();
   inference_mutex_ = std::make_unique<std::mutex>();
+
   feature_order_->reserve(spec.feature_order_size());
   std::unordered_map<std::string, configs::FeatureSpec> name_to_spec;
   for (const auto &transform : spec.transforms()) {
@@ -46,6 +49,8 @@ std::vector<float> Model::PreprocessItem(const inference::InferRequestItem &item
     std::optional<inference::Feature> feat = std::nullopt;
     if (feat_it != item.features().end()) {
       feat = feat_it->second;
+    } else {
+      LOG(INFO) << "Missing '" << (*feature_order_)[i] << "' for item id=" << item.id();
     }
     const std::vector<float> &converted_feat = transforms_->at(i)->Apply(feat);
     out.insert(out.end(), converted_feat.begin(), converted_feat.end());
@@ -64,14 +69,16 @@ void Model::InferBatch(const google::protobuf::RepeatedPtrField<inference::Infer
   feats.reserve(D * N);
 
   for (const auto &item : items) {
+    if (item.id().empty()) {
+      LOG(WARNING) << "missing item id";
+    }
     ids.push_back(item.id());
     const std::vector<float> &feat = PreprocessItem(item);
     feats.insert(feats.end(), feat.begin(), feat.end());
   }
   const std::vector<float> &pred_vector = InferMatrixInternal(feats, D, N);
-  if (pred_vector.size() != N) {
-    throw std::runtime_error("expected preds.size() == N");
-  }
+  CHECK_EQ(pred_vector.size(), N);
+
   for (int i = 0; i < N; ++i) {
     inference::Feature pred;
     pred.set_f32_value(pred_vector[i]);

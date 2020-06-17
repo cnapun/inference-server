@@ -13,6 +13,7 @@ cc_library(
         "//cpp/server/transforms:transform_registry",
         "//proto:inference_cc_proto",
         "//proto:model_spec_cc_proto",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -39,6 +40,7 @@ cc_library(
         "//proto:inference_cc_proto",
         "//proto:linear_model_cc_proto",
         "//proto:model_spec_cc_proto",
+        "@com_github_google_glog//:glog",
     ],
 )
 

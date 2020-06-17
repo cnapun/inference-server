@@ -12,6 +12,7 @@ cc_library(
         "//cpp/server/models:model_registry",
         "//proto:inference_cc_proto",
         "//proto:model_spec_cc_proto",
+        "@com_github_google_glog//:glog",
     ],
 )
 
@@ -31,7 +32,8 @@ cc_binary(
     deps = [
         ":model_pool",
         "//proto:inference_cc_grpc",
+        "@com_github_gflags_gflags//:gflags",
+        "@com_github_google_glog//:glog",
         "@com_github_grpc_grpc//:grpc++",
-        "@com_google_gflags//:gflags",
     ],
 )

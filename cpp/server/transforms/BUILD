@@ -21,6 +21,7 @@ cc_library(
         ":transform",
         "//proto:inference_cc_proto",
         "//proto:model_spec_cc_proto",
+        "@com_github_google_glog//:glog",
     ],
 )
 
