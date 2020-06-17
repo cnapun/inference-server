@@ -3,7 +3,7 @@ load("@rules_cc//cc:defs.bzl", "cc_binary")
 package(default_visibility = ["//visibility:__pkg__"])
 
 cc_binary(
-    name = "inference_client",
+    name = "client",
     srcs = ["inference_client.cc"],
     defines = ["BAZEL_BUILD"],
     deps = [

@@ -5,7 +5,7 @@ This is mildly hacky, not practical yet. Basic C++ model inference server using 
 The only external dependencies should be xgboost (tested with 1.1.1) and bazel (tested with 3.2.0)
 
 To run server, `bazel run //cpp/server -- --port 50051`
-to run client, `bazel run //cpp/client:inference_client -- --port 50051`
+to run client, `bazel run //cpp/client -- --port 50051`
 
 ### Code formatting
 Files are currently formatted by

@@ -21,8 +21,8 @@ DEFINE_string(host, "localhost", "Host to ping");
 
 int main(int argc, char **argv) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
-  std::shared_ptr<Channel> channel(grpc::CreateChannel(FLAGS_host + ":" + std::to_string(FLAGS_port),
-                                                       grpc::InsecureChannelCredentials()));
+  std::shared_ptr<Channel> channel(grpc::CreateChannel(
+      FLAGS_host + ":" + std::to_string(FLAGS_port), grpc::InsecureChannelCredentials()));
   const auto &stub = ModelInference::NewStub(channel);
   InferRequest request;
   request.set_model("exp1_net");
