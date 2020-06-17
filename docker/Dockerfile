@@ -42,14 +42,13 @@ ENV PATH="/external/ninja/build-cmake:${PATH}"
 WORKDIR /src
 COPY . .
 
-RUN bazel build -c opt --jobs=${bazel_jobs} //cpp/...
+RUN bazel build -c opt --jobs=${bazel_jobs} //cpp/server //cpp/client
 
-
-RUN mkdir /built_binaries/inference_server/ \
+RUN mkdir -p /built_binaries/inference_server/ \
     && ldd bazel-bin/cpp/server/server | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' /built_binaries/inference_server/ \
     && cp bazel-bin/cpp/server/server /built_binaries/inference_server/server \
     && cp -r /src/data /data
-RUN mkdir /built_binaries/inference_client/ \
+RUN mkdir -p /built_binaries/inference_client/ \
     && ldd bazel-bin/cpp/client/client | grep "=> /" | awk '{print $3}' | xargs -I '{}' cp -v '{}' /built_binaries/inference_client/ \
     && cp bazel-bin/cpp/client/client /built_binaries/inference_client/client \
     && cp -r /src/data /data
